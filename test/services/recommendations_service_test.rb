@@ -28,13 +28,13 @@ class RecommendationsServiceTest < ActiveSupport::TestCase
       rank_score: 0.945,
       label: "perfect_match"
     }
-    
+
     assert_equal expected_result, result.first
   end
 
   test "filters by brand name" do
     result = RecommendationsService.call(@user, { page: 1, per_page: 25, query: "oyot" })
-    
+
     assert_not_empty result
     assert result.all? { |c| c[:brand][:name].include?("Toyota") }
   end
@@ -56,14 +56,14 @@ class RecommendationsServiceTest < ActiveSupport::TestCase
   end
 
   test "filters by price range" do
-    result = RecommendationsService.call(@user, { 
-      page: 1, 
-      per_page: 25, 
+    result = RecommendationsService.call(@user, {
+      page: 1,
+      per_page: 25,
       price_min: 35000,
-      price_max: 40000 
+      price_max: 40000
     })
 
     assert_not_empty result
     assert result.all? { |c| c[:price] >= 35000 && c[:price] <= 40000 }
   end
-end 
+end

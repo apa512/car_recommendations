@@ -66,4 +66,4 @@ class RecommendationsControllerTest < ActionDispatch::IntegrationTest
         headers: { 'Content-Type' => 'application/json' }
       )
   end
-end 
+end

@@ -22,9 +22,9 @@ class Car < ApplicationRecord
         if recommended_cars.blank?
           "NULL::float AS rank_score"
         else
-          "CASE 
+          "CASE
             #{recommended_cars.map { |car| "WHEN cars.id = #{car['car_id']} THEN #{car['rank_score']}::float" }.join(' ')}
-            ELSE NULL::float 
+            ELSE NULL::float
           END AS rank_score"
         end
       )
