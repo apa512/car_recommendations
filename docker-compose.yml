@@ -8,8 +8,6 @@ services:
     ports:
       - "3000:3000"
     command: bash -c "rm -f /app/tmp/pids/server.pid && rails s -b 0.0.0.0"
-    environment: 
-      DATABASE_URL: postgres://postgres@postgres:5432/car_market_development
     tty: true
 
   postgres:

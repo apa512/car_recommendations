@@ -20,17 +20,17 @@ class Car < ApplicationRecord
   }
 
   scope :with_rank_scores, ->(recommended_cars) {
-    return all if recommended_cars.blank?
-
-    rank_scores = recommended_cars.each_with_object({}) { |car, hash| hash[car['car_id']] = car['rank_score'] }
-    
     select(
       "cars.*",
       Arel.sql(
-        "CASE 
-          #{rank_scores.map { |id, score| "WHEN cars.id = #{id} THEN #{score}" }.join(' ')}
-          ELSE NULL 
-        END AS rank_score"
+        if recommended_cars.blank?
+          "NULL::float AS rank_score"
+        else
+          "CASE 
+            #{recommended_cars.map { |car| "WHEN cars.id = #{car['car_id']} THEN #{car['rank_score']}::float" }.join(' ')}
+            ELSE NULL::float 
+          END AS rank_score"
+        end
       )
     )
   }

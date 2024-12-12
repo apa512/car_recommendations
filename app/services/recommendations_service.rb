@@ -15,12 +15,14 @@ class RecommendationsService
     cars = cars.where("cars.price <= ?", price_max) if price_max.present?
     cars = cars.where("brands.name ILIKE :query", query: "%#{query}%") if query.present?
 
-    cars.order(priority: :asc)
-      .select("brands.name AS brand_name")
+    cars = cars.select("brands.name AS brand_name")
+      .order(priority: :asc)
       .order("rank_score DESC NULLS LAST")
       .order(price: :asc)
       .offset((page - 1) * per_page)
-      .limit(per_page).map do |car|
+      .limit(per_page)
+
+    cars.map do |car|
       {
         id: car.id,
         model: car.model,
