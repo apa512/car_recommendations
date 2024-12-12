@@ -2,21 +2,17 @@ class Car < ApplicationRecord
   belongs_to :brand
 
   scope :with_priority_for_user, ->(user) {
-    preferred_brands_sql = user.preferred_brands.select(:id).to_sql
-
-    select(
-      "cars.*",
-      Arel.sql(
+    joins("LEFT JOIN user_preferred_brands upb ON upb.brand_id = cars.brand_id AND upb.user_id = #{user.id}")
+      .select(
+        "cars.*",
         "CASE
-          WHEN brands.id IN (#{preferred_brands_sql})
-            AND cars.price BETWEEN #{user.preferred_price_range.first} AND #{user.preferred_price_range.last}
-          THEN 0
-          WHEN brands.id IN (#{preferred_brands_sql})
-          THEN 1
+          WHEN upb.id IS NOT NULL AND cars.price BETWEEN #{user.preferred_price_range.first} AND #{user.preferred_price_range.last}
+            THEN 0
+          WHEN upb.id IS NOT NULL
+            THEN 1
           ELSE 2
         END AS priority"
       )
-    )
   }
 
   scope :with_rank_scores, ->(recommended_cars) {
